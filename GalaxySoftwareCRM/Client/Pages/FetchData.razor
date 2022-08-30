@@ -1,47 +1,70 @@
 ﻿@page "/fetchdata"
 @using GalaxySoftwareCRM.Shared
-@inject HttpClient Http
+@using GalaxySoftwareCRM.Client.Services
+@using NpgsqlTypes
+@inject IDataService service
+@inject ActionService actionservice
+@*@inject HttpClient Http*@
 
-<PageTitle>Weather forecast</PageTitle>
 
-<h1>Weather forecast</h1>
+
+<PageTitle>Category</PageTitle>
+
+<h1>Category Pages</h1>
 
 <p>This component demonstrates fetching data from the server.</p>
 
-@if (forecasts == null)
+
+@if (categorylist == null)
 {
-    <p><em>Loading...</em></p>
+        <div class="d-flex justify-content-center align-items-center" style="height:100px;">
+        <MudProgressCircular Color="Color.Primary" Style="height:70px;width:70px;" Indeterminate="true" />
+        </div>
 }
 else
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Temp. (C)</th>
-                <th>Temp. (F)</th>
-                <th>Summary</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var forecast in forecasts)
-            {
-                <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
+    
+       <MudTable Items="@categorylist" Hover="true" Breakpoint="Breakpoint.Sm" >
+        <HeaderContent>
+            <MudTh>Name</MudTh>
+            <MudTh>ShortDesc</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Nr">@context.name</MudTd>
+            <MudTd DataLabel="Sign">@context.shortdesc</MudTd>
+        </RowTemplate>
+         <PagerContent>
+            <MudTablePager />
+        </PagerContent>
+        </MudTable>
+        
+}       
+        
+       
+        
+
 
 @code {
-    private WeatherForecast[]? forecasts;
+    private IEnumerable<Category>? categorylist;
+
+
 
     protected override async Task OnInitializedAsync()
     {
-        forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("WeatherForecast");
+        actionservice.AddNewAction = AddCategoryExecute;
+
+        List<ParameterHelper>? parameters = new()
+        {
+            new ParameterHelper{ PsqlDbTypes = NpgsqlDbType.Integer, PsqlParameterName = "_categoryid", PsqlParameterValue = -9, PsqlParameterDirection = System.Data.ParameterDirection.Input}
+        };
+        dynamic apiHelper = new ApiHelper { IsStoredProcedure = true, StoredProcedureName = "usp_getcategoryinfo", Parameters = parameters, SqlExecutionType = SqlExecutionTypes.ExecuteResult };
+
+        categorylist = await service.GetDataByProcedure<Category>(apiHelper);
+
+    }
+
+    private void AddCategoryExecute()
+    {
+        
     }
 }

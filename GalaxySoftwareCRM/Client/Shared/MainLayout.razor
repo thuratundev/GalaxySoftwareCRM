@@ -1,4 +1,6 @@
 ﻿@inherits LayoutComponentBase
+@using Services;
+@inject ActionService actionservice
 
 <MudThemeProvider />
 <MudDialogProvider />
@@ -8,6 +10,9 @@
 <MudLayout>
      <MudAppBar>
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+        <MudSpacer />
+         <MudIconButton Icon="@Icons.Material.Rounded.FilterAlt" Color="Color.Inherit" />
+        <MudIconButton Icon="@Icons.Material.Rounded.AddCircle" OnClick="@((e) => AddItemClicked())" Color="Color.Inherit" />
     </MudAppBar>
 
     <MudDrawer @bind-Open="@_drawerOpen">
@@ -20,14 +25,16 @@
   </div>
 
 </MudDrawerHeader>
-<MudDivider />
+    <MudDivider />
         <NavMenu/>
     </MudDrawer>
 
-
     <MudMainContent>
-        <MudContainer MaxWidth="MaxWidth.ExtraLarge">
+       
+        <MudContainer Fixed=true MaxWidth="MaxWidth.Medium">
+             
             @Body
+           
         </MudContainer>
     </MudMainContent>
 </MudLayout>
@@ -38,5 +45,10 @@
     void DrawerToggle()
     {
         _drawerOpen = !_drawerOpen;
+    }
+
+    void AddItemClicked()
+    {
+        actionservice.AddNewAction.Invoke();
     }
 }

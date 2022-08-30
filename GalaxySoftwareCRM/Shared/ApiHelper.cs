@@ -11,7 +11,7 @@ namespace GalaxySoftwareCRM.Shared
         public bool IsStoredProcedure { get; set; }
         public string? SqlQuery { get; set; }
         public string? StoredProcedureName { get; set; }
-        public object[]? Parameters { get; set; }
+        public List<ParameterHelper>? Parameters { get; set; }
         public SqlExecutionTypes SqlExecutionType { get; set; }
     }
 

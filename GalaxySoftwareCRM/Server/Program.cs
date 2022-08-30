@@ -1,3 +1,5 @@
+
+using GalaxySoftwareCRM.Server.DataAccess;
 using Microsoft.AspNetCore.ResponseCompression;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,7 +9,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
+
+DbHelper.SqlConnectionString = builder.Configuration.GetConnectionString("DbConnection");
+
 var app = builder.Build();
+
+
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
