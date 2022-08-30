@@ -1,6 +1,7 @@
 ﻿@page "/fetchdata"
 @using GalaxySoftwareCRM.Shared
 @using GalaxySoftwareCRM.Client.Services
+@using GalaxySoftwareCRM.Client.Components 
 @using NpgsqlTypes
 @inject IDataService service
 @inject ActionService actionservice
@@ -8,30 +9,29 @@
 
 
 
-<PageTitle>Category</PageTitle>
+<PageTitle>Customer</PageTitle>
 
-<h1>Category Pages</h1>
+<h1>Customer Pages</h1>
 
 <p>This component demonstrates fetching data from the server.</p>
 
 
-@if (categorylist == null)
+@if (customerlist == null)
 {
-        <div class="d-flex justify-content-center align-items-center" style="height:100px;">
-        <MudProgressCircular Color="Color.Primary" Style="height:70px;width:70px;" Indeterminate="true" />
-        </div>
+    <ProgressRing/>
 }
 else
 {
-    
-       <MudTable Items="@categorylist" Hover="true" Breakpoint="Breakpoint.Sm" >
+       <MudTable Items="@customerlist" Hover="true" Breakpoint="Breakpoint.Sm" >
         <HeaderContent>
             <MudTh>Name</MudTh>
             <MudTh>ShortDesc</MudTh>
+            <MudTh>Contact</MudTh>
         </HeaderContent>
         <RowTemplate>
-            <MudTd DataLabel="Nr">@context.name</MudTd>
-            <MudTd DataLabel="Sign">@context.shortdesc</MudTd>
+            <MudTd DataLabel="Name">@context.Name</MudTd>
+            <MudTd DataLabel="ShortDesc">@context.ShortDesc</MudTd>
+            <MudTd DataLabel="Contact">@context.Contact</MudTd>
         </RowTemplate>
          <PagerContent>
             <MudTablePager />
@@ -45,9 +45,7 @@ else
 
 
 @code {
-    private IEnumerable<Category>? categorylist;
-
-
+    private IEnumerable<Customer>? customerlist;
 
     protected override async Task OnInitializedAsync()
     {
@@ -55,11 +53,11 @@ else
 
         List<ParameterHelper>? parameters = new()
         {
-            new ParameterHelper{ PsqlDbTypes = NpgsqlDbType.Integer, PsqlParameterName = "_categoryid", PsqlParameterValue = -9, PsqlParameterDirection = System.Data.ParameterDirection.Input}
+            new ParameterHelper{ PsqlDbTypes = NpgsqlDbType.Integer, PsqlParameterName = "_customerid", PsqlParameterValue = -9, PsqlParameterDirection = System.Data.ParameterDirection.Input}
         };
-        dynamic apiHelper = new ApiHelper { IsStoredProcedure = true, StoredProcedureName = "usp_getcategoryinfo", Parameters = parameters, SqlExecutionType = SqlExecutionTypes.ExecuteResult };
+        dynamic apiHelper = new ApiHelper { IsStoredProcedure = true, StoredProcedureName = "usp_getcustomerinfo", Parameters = parameters, SqlExecutionType = SqlExecutionTypes.ExecuteResult };
 
-        categorylist = await service.GetDataByProcedure<Category>(apiHelper);
+        customerlist = await service.GetDataByProcedure<Customer>(apiHelper);
 
     }
 
