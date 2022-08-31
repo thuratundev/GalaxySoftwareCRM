@@ -13,6 +13,16 @@ namespace GalaxySoftwareCRM.Shared
         public string? ShortDesc { get; set; }
         public string? Contact { get; set; }
         public string? Address { get; set; }
-        public int? TownshipId { get; set; }
+        public string? CompanyName { get; set; }
+        public string? PhoneNo { get; set; }
+
+
+
+        public Int16? TownshipId { get; set; }
+        public Int16? CustGroupId { get; set; }
+
+
+
+
     }
 }

@@ -10,6 +10,19 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
 
+/*Added For CORS stands for cross-origin resource sharing
+ * more ref: here 
+ * https://www.syncfusion.com/faq/blazor/general/how-do-you-enable-cors-in-a-blazor-server-application
+ */
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CustomCorsPolicy", builder =>
+     builder.AllowAnyOrigin()
+                  .AllowAnyMethod()
+                  .AllowAnyHeader());
+});
+
+
 DbHelper.SqlConnectionString = builder.Configuration.GetConnectionString("DbConnection");
 
 var app = builder.Build();
@@ -30,6 +43,8 @@ else
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("CustomCorsPolicy");
 
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();

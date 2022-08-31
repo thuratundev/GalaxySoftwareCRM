@@ -1,0 +1,48 @@
+﻿@using GalaxySoftwareCRM.Shared;
+
+        <EditForm Model="@customer"  OnValidSubmit="OnValidSubmit">
+            <MudGrid>
+                    <MudItem xs="12" sm="6" md="4">
+                        <MudTextField Label="Customer Name" 
+                            @bind-Value="customer.Name" For="@(() => customer.Name)"/>
+                    </MudItem>
+                     <MudItem xs="12" sm="6" md="4">
+                        <MudTextField Label="Description"  
+                            @bind-Value="customer.ShortDesc" For="@(() => customer.ShortDesc)"/>
+                    </MudItem>
+                     <MudItem xs="12" sm="6" md="4">
+                        <MudTextField Label="Contact" 
+                            @bind-Value="customer.Contact" For="@(() => customer.Contact)"/>
+                    </MudItem>
+
+                    <MudItem xs="12" sm="6" md="4">
+                        <MudTextField Label="Customer Address" 
+                            @bind-Value="customer.Address" For="@(() => customer.Address)"/>
+                    </MudItem>
+                     <MudItem xs="12" sm="6" md="4">
+                        <MudTextField Label="Company Name" 
+                            @bind-Value="customer.CompanyName" For="@(() => customer.CompanyName)"/>
+                    </MudItem>
+                     <MudItem xs="12" sm="6" md="4">
+                        <MudTextField Label="PhoneNo" 
+                            @bind-Value="customer.PhoneNo" For="@(() => customer.PhoneNo)"/>
+                    </MudItem>
+                    <MudItem>
+                        <MudButton ButtonType="ButtonType.Submit" 
+                                   Variant="Variant.Filled" 
+                                   Color="Color.Primary" 
+                                   Class="ml-auto">Register</MudButton>
+                    </MudItem>
+            </MudGrid>
+         </EditForm>
+
+@code
+{
+    public Customer customer { get; set; } = new();
+
+    private void OnValidSubmit(EditContext context)
+    {
+        
+        
+    }
+}
