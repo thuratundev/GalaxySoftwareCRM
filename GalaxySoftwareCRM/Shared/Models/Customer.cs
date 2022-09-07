@@ -8,18 +8,27 @@ namespace GalaxySoftwareCRM.Shared
 {
     public class Customer
     {     
-        public int CustomerId { get; set; }
-        public string? Name { get; set; }
-        public string? ShortDesc { get; set; }
-        public string? Contact { get; set; }
-        public string? Address { get; set; }
-        public string? CompanyName { get; set; }
-        public string? PhoneNo { get; set; }
+        public int customerid { get; set; }
+        public string? name { get; set; }
+        public string? shortdesc { get; set; }
+        public string? contact { get; set; }
+        public string? address { get; set; }
+        public string? companyname { get; set; }
+        public string? phone { get; set; }
+
+
+        public bool iscredit { get; set; }
+        public bool isinactive { get; set; }
+        public bool isdeleted { get; set; }
+        public bool isupdated { get; set; }
+
+        public Guid sr { get; set; }
 
 
 
-        public Int16? TownshipId { get; set; }
-        public Int16? CustGroupId { get; set; }
+        public Int16? townshipid { get; set; }
+        public Int16? custgroupid { get; set; }
+        public Int16? userid { get; set; }
 
 
 

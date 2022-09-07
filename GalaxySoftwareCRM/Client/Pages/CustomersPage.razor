@@ -5,6 +5,7 @@
 @using NpgsqlTypes
 @inject IDataService service
 @inject ActionService actionservice
+@inject FilterService filterservice
 @inject IDialogService DialogService
 @*@inject HttpClient Http*@
 
@@ -30,9 +31,9 @@ else
             <MudTh>Contact</MudTh>
         </HeaderContent>
         <RowTemplate>
-            <MudTd DataLabel="Name">@context.Name</MudTd>
-            <MudTd DataLabel="ShortDesc">@context.ShortDesc</MudTd>
-            <MudTd DataLabel="Contact">@context.Contact</MudTd>
+            <MudTd DataLabel="Name">@context.name</MudTd>
+            <MudTd DataLabel="ShortDesc">@context.shortdesc</MudTd>
+            <MudTd DataLabel="Contact">@context.contact</MudTd>
         </RowTemplate>
          <PagerContent>
             <MudTablePager />
@@ -44,26 +45,60 @@ else
        
 @code {
     private IEnumerable<Customer>? customerlist;
-      
+
+
+
+
     protected override async Task OnInitializedAsync()
     {
-        actionservice.AddNewAction = AddCategoryExecute;
+        actionservice.AddNewAction = AddCustomerNewExecute;
+        actionservice.FilterAction = ShowFilterActionExecute;
+        filterservice.RequeryCommand = RequeryByFilterExecute;
 
+        await GetData();
+
+    }
+
+    private async void RequeryByFilterExecute()
+    {
+        await GetData(-9,filterservice.SelectedTownshipId, filterservice.SelectedCustomerGroupId);
+        StateHasChanged();
+    }
+
+    private void ShowFilterActionExecute()
+    {
+        filterservice.IsTownshipVisible = false;
+        filterservice.IsCustomerVisible = true;
+        filterservice.IsCustomerGroupVisible = true;
+
+        filterservice.FilterVisibilityCommand.Invoke();
+
+    }
+
+    private async void AddCustomerNewExecute()
+    {
+        var options = new DialogOptions() { CloseButton = true, FullWidth = true, MaxWidth = MaxWidth.Large  };
+
+        await DialogService.Show<DialogPopupComponent>("Customer Setup", options ).Result;
+
+        await GetData();
+        StateHasChanged();
+    }
+
+    private async Task GetData(int? _customerid =-9,int? _townshipid =-9,int? _custgroupid =-9)
+    {
         List<ParameterHelper>? parameters = new()
         {
-            new ParameterHelper{ PsqlDbTypes = NpgsqlDbType.Integer, PsqlParameterName = "_customerid", PsqlParameterValue = -9, PsqlParameterDirection = System.Data.ParameterDirection.Input}
-        };
+            new ParameterHelper{ PsqlDbTypes = NpgsqlDbType.Integer, PsqlParameterName = "_customerid", PsqlParameterValue = _customerid ?? -9, PsqlParameterDirection = System.Data.ParameterDirection.Input},
+            new ParameterHelper { PsqlDbTypes = NpgsqlDbType.Integer, PsqlParameterName = "_townshipid", PsqlParameterValue = _townshipid ?? -9, PsqlParameterDirection = System.Data.ParameterDirection.Input },
+            new ParameterHelper { PsqlDbTypes = NpgsqlDbType.Integer, PsqlParameterName = "_custgroupid", PsqlParameterValue = _custgroupid ?? -9, PsqlParameterDirection = System.Data.ParameterDirection.Input }
+    };
 
         ApiHelper apiHelper = new ApiHelper { IsStoredProcedure = true, StoredProcedureName = "usp_getcustomerinfo", Parameters = parameters, SqlExecutionType = SqlExecutionTypes.ExecuteResult };
 
-        customerlist = await service.GetDataByProcedure<Customer>(apiHelper);
-      
-    }
+        customerlist = (await service.GetDataByProcedure<Customer>(apiHelper));
 
-    private void AddCategoryExecute()
-    {
-        var options = new DialogOptions() { CloseButton = true, FullWidth = true, MaxWidth = MaxWidth.Large };
         
-        DialogService.Show<DialogPopupComponent>("Dialog", options);
+
     }
 }

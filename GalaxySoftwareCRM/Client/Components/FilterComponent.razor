@@ -1,0 +1,87 @@
+﻿@using GalaxySoftwareCRM.Shared;
+@using GalaxySoftwareCRM.Shared.Models;
+@using GalaxySoftwareCRM.Client.Services
+@inject IDataService service
+@inject FilterService filterservice
+
+
+<div class="d-flex align-items-end flex-column bd-highlight" Style="height:100%;margin-right:-20px">
+    <div class="flex-grow-1 flex-shrink-1" style="height:90%;width:100%;margin-top:10px;margin-right:auto;margin-left:auto;overflow-x:hidden;">
+        <MudGrid>
+            <MudItem xs="12" Class="@(filterservice.IsTownshipVisible == true ? "visible" : "collapse")">
+                <MudSelect T="Int16?" Label="Township" @bind-Value=filterservice.SelectedTownshipId Clearable>
+                    @foreach (var township in TownshipSource.Take(20))
+                    {
+                                        <MudSelectItem T="Int16?" Value="@township?.TownshipId">
+                            @township?.Name
+                                        </MudSelectItem>
+                    }
+                             </MudSelect>        
+            </MudItem>
+            <MudItem xs="12" Class="@(filterservice.IsCustomerGroupVisible == true ? "visible" : "collapse")">
+                <MudSelect T="Int16?" Label="CustomerGroup" @bind-Value=filterservice.SelectedCustomerGroupId Clearable>
+                    @foreach (var customergroup in CustomerGroupSource)
+                    {
+                        <MudSelectItem T="Int16?" Value="@customergroup?.CustGroupId">
+                            @customergroup?.Name
+                        </MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+          
+           
+            
+           
+        </MudGrid>
+    </div>
+    <div class="mt-auto p-2 bd-highlight" style="height:8%;">
+            <MudButton ButtonType="ButtonType.Submit"
+               Variant="Variant.Filled"
+                   Style="width:85px;margin-left:10px;background-color:#F0EABE">
+        Cancel
+    </MudButton>
+        <MudButton ButtonType="ButtonType.Submit"
+                   Variant="Variant.Filled"
+                   OnClick="@((e) => FilterApplyClicked())"
+                   Style="width:85px;margin-left:10px;background-color:#2B7A0B;color:white">
+            Apply
+        </MudButton>
+        </div>
+    </div>
+
+   
+
+
+
+@code 
+{
+    private CustomerService customerservice;
+
+    public IEnumerable<Township> TownshipSource = new List<Township>();
+
+    public IEnumerable<CustomerGroup> CustomerGroupSource = new List<CustomerGroup>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        filterservice.FilterVisibilityCommand = FilterVisibilityExecute;
+
+        customerservice = new CustomerService(service);
+
+        TownshipSource = await customerservice.GetTownshipSource();
+
+        CustomerGroupSource = await customerservice.GetCustomerGroupSource();
+    }
+
+    private void FilterVisibilityExecute()
+    {
+        StateHasChanged();
+    }
+
+    private void FilterApplyClicked()
+    {
+        filterservice.RequeryCommand.Invoke();
+
+        
+    }
+
+}

@@ -1,6 +1,8 @@
 ﻿@inherits LayoutComponentBase
+@using GalaxySoftwareCRM.Client.Components
 @using Services;
 @inject ActionService actionservice
+
 
 <MudThemeProvider />
 <MudDialogProvider />
@@ -8,33 +10,52 @@
 
 
 <MudLayout>
-     <MudAppBar>
+     <MudAppBar Dense=false>
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
         <MudSpacer />
-         <MudIconButton Icon="@Icons.Material.Rounded.FilterAlt" Color="Color.Inherit" />
+         <MudIconButton Icon="@Icons.Material.Rounded.FilterAlt" OnClick="@((e) => FilterClicked())" Color="Color.Inherit" />
         <MudIconButton Icon="@Icons.Material.Rounded.AddCircle" OnClick="@((e) => AddItemClicked())" Color="Color.Inherit" />
     </MudAppBar>
 
-    <MudDrawer @bind-Open="@_drawerOpen">
+    <MudDrawer ClipMode="DrawerClipMode.Never" Elevation="1" Variant="@DrawerVariant.Responsive" @bind-Open="@_drawerOpen">
        <MudDrawerHeader style="background-color: #f5f5f5;">
-  <div Class="d-flex flex-row flex-grow-1 gap-2" Elevation="0">
+        <div Class="d-flex flex-row flex-grow-1 gap-2" Elevation="0">
     <MudAvatar Color="Color.Primary">GS</MudAvatar>
     <div class="d-flex align-center" style="margin-left: 8px;">
       <MudText Align="Align.Center" Elevation="4" Typo="Typo.subtitle2">CRM</MudText>
     </div>
   </div>
 
-</MudDrawerHeader>
-    <MudDivider />
+        </MudDrawerHeader>
+        <MudDivider />
         <NavMenu/>
     </MudDrawer>
 
-    <MudMainContent>
-       
-        <MudContainer Fixed=true MaxWidth="MaxWidth.Medium">
-             
+    <MudDrawer DisableOverlay="true"  
+                Width="350px"
+               Style="background-color:#FEFBF6;padding:5px;"
+                Variant="DrawerVariant.Temporary"
+               ClipMode="DrawerClipMode.Always"
+               @bind-Open="@_drawerfilterOpen" 
+               Anchor="Anchor.End" Elevation="8" >
+        <MudDrawerHeader style="background-color: #533483;">
+            <div Class="d-flex flex-row flex-grow-1 gap-2" Elevation="0">
+                <div class="d-flex align-center" style="margin-left: 8px;">
+                    <MudText Elevation="4" Typo="Typo.subtitle2" Style="color:white">APPLY FILTERS</MudText>
+                </div>
+            </div>
+        </MudDrawerHeader>
+        <MudDrawerContainer  Style="margin-top:0px;height:90%;">
+            <MudContainer Style="height:100%;">
+                <FilterComponent />        
+            </MudContainer>
+        </MudDrawerContainer>
+        
+    </MudDrawer>
+ 
+    <MudMainContent Class="pt-16 px-16">
+        <MudContainer Fixed=true MaxWidth="MaxWidth.Medium">   
             @Body
-           
         </MudContainer>
     </MudMainContent>
 </MudLayout>
@@ -42,9 +63,20 @@
 @code {
     bool _drawerOpen = true;
 
+    bool _drawerfilterOpen = false;
+
     void DrawerToggle()
     {
         _drawerOpen = !_drawerOpen;
+    }
+
+    void FilterClicked()
+    {
+        if(actionservice.FilterAction != null)
+        {
+            _drawerfilterOpen = !_drawerfilterOpen;
+            actionservice.FilterAction.Invoke();
+        }
     }
 
     void AddItemClicked()

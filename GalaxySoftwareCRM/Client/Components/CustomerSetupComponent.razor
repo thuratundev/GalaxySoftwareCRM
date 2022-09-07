@@ -1,48 +1,134 @@
 ﻿@using GalaxySoftwareCRM.Shared;
+@using GalaxySoftwareCRM.Shared.Models;
+@using GalaxySoftwareCRM.Client.Services
+@using NpgsqlTypes
+@inject IDataService service
+@inject IDialogService DialogService
 
-        <EditForm Model="@customer"  OnValidSubmit="OnValidSubmit">
+
+        <EditForm  Model="@customer"  OnValidSubmit="OnValidSubmit">
+        <div class="d-flex flex-md-column" style="height:400px;overflow-y:auto;overflow-x:hidden">
             <MudGrid>
                     <MudItem xs="12" sm="6" md="4">
                         <MudTextField Label="Customer Name" 
-                            @bind-Value="customer.Name" For="@(() => customer.Name)"/>
+                            @bind-Value="customer.name" For="@(() => customer.name)"/>
                     </MudItem>
                      <MudItem xs="12" sm="6" md="4">
                         <MudTextField Label="Description"  
-                            @bind-Value="customer.ShortDesc" For="@(() => customer.ShortDesc)"/>
+                            @bind-Value="customer.shortdesc" For="@(() => customer.shortdesc)"/>
                     </MudItem>
                      <MudItem xs="12" sm="6" md="4">
                         <MudTextField Label="Contact" 
-                            @bind-Value="customer.Contact" For="@(() => customer.Contact)"/>
+                            @bind-Value="customer.contact" For="@(() => customer.contact)"/>
                     </MudItem>
 
                     <MudItem xs="12" sm="6" md="4">
                         <MudTextField Label="Customer Address" 
-                            @bind-Value="customer.Address" For="@(() => customer.Address)"/>
+                            @bind-Value="customer.address" For="@(() => customer.address)"/>
                     </MudItem>
                      <MudItem xs="12" sm="6" md="4">
                         <MudTextField Label="Company Name" 
-                            @bind-Value="customer.CompanyName" For="@(() => customer.CompanyName)"/>
+                            @bind-Value="customer.companyname" For="@(() => customer.companyname)"/>
                     </MudItem>
                      <MudItem xs="12" sm="6" md="4">
                         <MudTextField Label="PhoneNo" 
-                            @bind-Value="customer.PhoneNo" For="@(() => customer.PhoneNo)"/>
+                            @bind-Value="customer.phone" For="@(() => customer.phone)"/>
                     </MudItem>
-                    <MudItem>
-                        <MudButton ButtonType="ButtonType.Submit" 
-                                   Variant="Variant.Filled" 
-                                   Color="Color.Primary" 
-                                   Class="ml-auto">Register</MudButton>
+
+                    <MudItem xs="12" sm="6" md="4">
+                        <MudCheckBox Label="AllowCredit"
+                                      @bind-Value="customer.iscredit" For="@(() => customer.iscredit)" />
+                    </MudItem>
+                    <MudItem xs="12" sm="6" md="4">
+                        <MudCheckBox Label="Inactive"
+                                      @bind-Value="customer.isinactive" For="@(() => customer.isinactive)" />
+                    </MudItem>
+
+                    <MudItem xs="12" sm="6" md="4">
+                     <MudSelect T="Int16?" Label="Township" @bind-Value="customer.townshipid">
+                            @foreach (var township in TownshipSource.Take(20))
+                            {
+                            <MudSelectItem T="Int16?" Value="@township?.TownshipId">
+                                @township?.Name
+                            </MudSelectItem>
+                            }
+                     </MudSelect>        
+                    </MudItem>
+                    <MudItem xs="12" sm="6" md="4">
+                        <MudSelect T="Int16?" Label="CustGroup" @bind-Value="customer.custgroupid">
+                            @foreach (var customergroup in CustomerGroupSource)
+                            {
+                                <MudSelectItem T="Int16?" Value="@customergroup?.CustGroupId">
+                                 @customergroup?.Name
+                                </MudSelectItem>
+                            }
+                        </MudSelect>
                     </MudItem>
             </MudGrid>
+        </div>
+        <div class="d-flex flex-md-row m-2" >
+                <MudButton ButtonType="ButtonType.Submit"
+                           Variant="Variant.Filled"
+                           Color="Color.Warning"
+                           Class="ml-auto">Cancel</MudButton>
+                <MudButton ButtonType="ButtonType.Submit"
+                           Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           Style="margin-left:10px">Confirm
+                </MudButton>  
+        </div>
          </EditForm>
+
 
 @code
 {
+    [CascadingParameter] 
+    MudDialogInstance MudDialog { get; set; }
+
+
     public Customer customer { get; set; } = new();
 
-    private void OnValidSubmit(EditContext context)
+    private CustomerService customerservice;
+
+    public IEnumerable<Township> TownshipSource = new List<Township>();
+
+    public IEnumerable<CustomerGroup> CustomerGroupSource = new List<CustomerGroup>();
+
+    public Int16? SelectedTownshipId { get; set; }
+
+    protected override async Task OnInitializedAsync()
     {
-        
-        
+        customerservice = new CustomerService(service);
+
+        TownshipSource = await customerservice.GetTownshipSource();
+
+        CustomerGroupSource = await customerservice.GetCustomerGroupSource();
+    }
+
+    private async void OnValidSubmit(EditContext context)
+    {
+        Customer _customer = (context.Model as Customer) ?? new();
+
+
+        _customer.iscredit = true;
+        _customer.isinactive = false;
+        _customer.isdeleted = false;
+        _customer.isupdated = true;
+        _customer.userid = 1;
+
+        _customer.sr = Guid.NewGuid();
+
+
+        List<Customer> SaveCustomerObject = new List<Customer>();
+        SaveCustomerObject.Add(_customer);
+
+        var recordcount = await customerservice.Save(SaveCustomerObject);
+
+        if(recordcount == -1)
+        {
+           
+            await DialogService.ShowMessageBox("Confirm","Confirm Completed Successfully");
+            MudDialog.Close();
+        }
     }
 }

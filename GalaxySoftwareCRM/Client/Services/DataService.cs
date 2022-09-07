@@ -30,9 +30,43 @@ namespace GalaxySoftwareCRM.Client.Services
                 PropertyNameCaseInsensitive = true,
             };
 
+
+            if(resultstream.Length == 0)
+            {
+                return new List<T>();
+            }
+
             /*Here, we use System.Text.Json For Only Reason for Non-blocking Async 
              */
-            var resultlist = await System.Text.Json.JsonSerializer.DeserializeAsync<List<T>>(resultstream,jsonSerializerOptions) ?? new List<T>();
+             var resultlist = await System.Text.Json.JsonSerializer.DeserializeAsync<List<T>>(resultstream,jsonSerializerOptions) ?? new List<T>();
+            return resultlist;
+        }
+
+        public async Task<T?> SetDataByProcedure<T>(ApiHelper apiHelper)
+        {
+            string stringapihelper = Newtonsoft.Json.JsonConvert.SerializeObject(apiHelper);
+
+            HttpContent content = new StringContent(stringapihelper, System.Text.Encoding.UTF8, "application/json");
+            var httpResponseMessage = await _httpclient.PostAsync("api", content);
+
+            
+
+            var resultstream = await httpResponseMessage.Content.ReadAsStreamAsync();
+
+
+            JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+            };
+
+            if(resultstream.Length ==0)
+            {
+                return default;
+            }
+
+            /*Here, we use System.Text.Json For Only Reason for Non-blocking Async 
+             */
+            var resultlist = await System.Text.Json.JsonSerializer.DeserializeAsync<T>(resultstream, jsonSerializerOptions);
             return resultlist;
         }
     }
