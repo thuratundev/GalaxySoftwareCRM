@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GalaxySoftwareCRM.Shared.Models
 {
-    public class CustomerGroup
+    public class CustomerGroup : BaseModel
     {
         public Int16 CustGroupId { get; set; }
 

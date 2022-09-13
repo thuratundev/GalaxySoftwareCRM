@@ -13,33 +13,43 @@
 
 <PageTitle>Customer</PageTitle>
 
-<h1>Customer Pages</h1>
-
-<p>This component demonstrates fetching data from the server.</p>
-
-
 @if (customerlist == null)
 {
-    <ProgressRing/>
+    <div class="d-flex align-items-center flex-column" Style="height:100%;">
+        <ProgressRing />
+    </div>
 }
 else
 {
+    <div>
        <MudTable  Items="@customerlist" Hover="true">
         <HeaderContent>
             <MudTh>Name</MudTh>
             <MudTh>ShortDesc</MudTh>
             <MudTh>Contact</MudTh>
-        </HeaderContent>
+            <MudTh>PhoneNo</MudTh>
+            <MudTh></MudTh>
+            <MudTh></MudTh>
+        </HeaderContent>    
         <RowTemplate>
             <MudTd DataLabel="Name">@context.name</MudTd>
             <MudTd DataLabel="ShortDesc">@context.shortdesc</MudTd>
             <MudTd DataLabel="Contact">@context.contact</MudTd>
+            <MudTd DataLabel="PhoneNo">@context.phone</MudTd>
+            <MudTd Style="width:50px"><MudIconButton OnClick="@(()=>EditCutomerExecute(context))"
+                Color="Color.Primary" 
+                Icon="@Icons.Material.Filled.ModeEdit" 
+                aria-label="edit"></MudIconButton></MudTd>
+            <MudTd Style="width:50px"><MudIconButton OnClick="@(()=>DeleteCustomerExecute(context))"
+                Color="Color.Error" 
+                Icon="@Icons.Material.Filled.DeleteForever" 
+                aria-label="delete"></MudIconButton></MudTd>
         </RowTemplate>
          <PagerContent>
             <MudTablePager />
         </PagerContent>
         </MudTable>
-        
+    </div>
 }       
         
        
@@ -67,7 +77,7 @@ else
 
     private void ShowFilterActionExecute()
     {
-        filterservice.IsTownshipVisible = false;
+        filterservice.IsTownshipVisible = true;
         filterservice.IsCustomerVisible = true;
         filterservice.IsCustomerGroupVisible = true;
 
@@ -75,24 +85,80 @@ else
 
     }
 
+    #region Customer Add/Edit/Select
     private async void AddCustomerNewExecute()
     {
-        var options = new DialogOptions() { CloseButton = true, FullWidth = true, MaxWidth = MaxWidth.Large  };
+        var options = new DialogOptions() { CloseButton = true, FullWidth = true, MaxWidth = MaxWidth.Large , NoHeader = true };
+        var parameters = new DialogParameters { ["ChildContent"] = typeof(CustomerSetupComponent)};
 
-        await DialogService.Show<DialogPopupComponent>("Customer Setup", options ).Result;
+        var dialogresult =  await DialogService.Show<DialogPopupComponent>("Customer Setup", parameters, options).Result;
 
-        await GetData();
-        StateHasChanged();
+        if (dialogresult.Cancelled == false)
+        {
+            await GetData();
+            StateHasChanged();
+        }
     }
 
-    private async Task GetData(int? _customerid =-9,int? _townshipid =-9,int? _custgroupid =-9)
+    private async void EditCutomerExecute(Customer customer)
+    {
+        var options = new DialogOptions() { CloseButton = true, FullWidth = true, MaxWidth = MaxWidth.Large , NoHeader = true };
+        var parameters = new DialogParameters();
+
+        parameters.Add("ChildContent", typeof(CustomerSetupComponent));
+        parameters.Add("EditItem", customer);
+
+        var dialogresult = await DialogService.Show<DialogPopupComponent>("Customer Setup", parameters, options).Result;
+
+        if (dialogresult.Cancelled == false)
+        {
+            await GetData();
+            StateHasChanged();
+        }
+    }
+
+    private async void DeleteCustomerExecute(Customer customer)
+    {
+        MessageBoxOptions mboxoption = new MessageBoxOptions { Message = "Are you Sure to delete?", Title = "Delete", YesText = "Delete", CancelText = "Cancel" };
+        DialogOptions dlogoption = new DialogOptions { FullWidth = true};
+        var dialogresult = await DialogService.ShowMessageBox(mboxOptions: mboxoption ,options : dlogoption);
+
+        if(dialogresult == true)
+        {
+            var deletedcustomer = await DeleteCustomerById(customer.customerid);
+
+            if(deletedcustomer == -1)
+            {
+                customerlist =  customerlist.Where(x => x.customerid != customer.customerid).ToList();
+                StateHasChanged();
+            }
+        }
+
+
+    }
+
+        private async Task<int?> DeleteCustomerById(int? _customerid)
+    {
+        List<ParameterHelper>? parameters = new()
+        {
+            new ParameterHelper{ PsqlDbTypes = NpgsqlDbType.Integer, PsqlParameterName = "_customerid", PsqlParameterValue = _customerid ?? -9, PsqlParameterDirection = System.Data.ParameterDirection.Input}
+        };
+
+        ApiHelper apiHelper = new ApiHelper { IsStoredProcedure = true, StoredProcedureName = "usp_deletecustomerbyid", Parameters = parameters, SqlExecutionType = SqlExecutionTypes.ExecuteOnly };
+
+        var result = await service.SetDataByProcedure<int?>(apiHelper);
+
+        return result;
+    }
+
+        private async Task GetData(int? _customerid =-9,int? _townshipid =-9,int? _custgroupid =-9)
     {
         List<ParameterHelper>? parameters = new()
         {
             new ParameterHelper{ PsqlDbTypes = NpgsqlDbType.Integer, PsqlParameterName = "_customerid", PsqlParameterValue = _customerid ?? -9, PsqlParameterDirection = System.Data.ParameterDirection.Input},
             new ParameterHelper { PsqlDbTypes = NpgsqlDbType.Integer, PsqlParameterName = "_townshipid", PsqlParameterValue = _townshipid ?? -9, PsqlParameterDirection = System.Data.ParameterDirection.Input },
             new ParameterHelper { PsqlDbTypes = NpgsqlDbType.Integer, PsqlParameterName = "_custgroupid", PsqlParameterValue = _custgroupid ?? -9, PsqlParameterDirection = System.Data.ParameterDirection.Input }
-    };
+        };
 
         ApiHelper apiHelper = new ApiHelper { IsStoredProcedure = true, StoredProcedureName = "usp_getcustomerinfo", Parameters = parameters, SqlExecutionType = SqlExecutionTypes.ExecuteResult };
 
@@ -101,4 +167,6 @@ else
         
 
     }
+
+    #endregion
 }

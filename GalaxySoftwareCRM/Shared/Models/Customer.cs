@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GalaxySoftwareCRM.Shared.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GalaxySoftwareCRM.Shared
 {
-    public class Customer
+    public class Customer : BaseModel
     {     
         public int customerid { get; set; }
         public string? name { get; set; }

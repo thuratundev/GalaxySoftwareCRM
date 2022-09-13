@@ -4,9 +4,16 @@
 @using NpgsqlTypes
 @inject IDataService service
 @inject IDialogService DialogService
+@inject FilterService filterservice
 
 
-        <EditForm  Model="@customer"  OnValidSubmit="OnValidSubmit">
+ <div class="flex-column">
+    <div class="row h-25 p-2" style="border-radius:5px;background-color:#7A86B6">
+     <h3 style="color:white">Customer Setup</h3>
+ </div>
+ 
+ <div class="row h-75 mt-4">
+ <EditForm  Model="@customer"  OnValidSubmit="OnValidSubmit">
         <div class="d-flex flex-md-column" style="height:400px;overflow-y:auto;overflow-x:hidden">
             <MudGrid>
                     <MudItem xs="12" sm="6" md="4">
@@ -45,8 +52,8 @@
                     </MudItem>
 
                     <MudItem xs="12" sm="6" md="4">
-                     <MudSelect T="Int16?" Label="Township" @bind-Value="customer.townshipid">
-                            @foreach (var township in TownshipSource.Take(20))
+                     <MudSelect T="Int16?" Label="Township" @bind-Value="customer.townshipid" >
+                            @foreach (var township in TownshipSource)
                             {
                             <MudSelectItem T="Int16?" Value="@township?.TownshipId">
                                 @township?.Name
@@ -67,9 +74,10 @@
             </MudGrid>
         </div>
         <div class="d-flex flex-md-row m-2" >
-                <MudButton ButtonType="ButtonType.Submit"
+                <MudButton ButtonType="ButtonType.Button"
+                           OnClick="@(()=> @Cancel())"
                            Variant="Variant.Filled"
-                           Color="Color.Warning"
+                           Color="Color.Default"
                            Class="ml-auto">Cancel</MudButton>
                 <MudButton ButtonType="ButtonType.Submit"
                            Variant="Variant.Filled"
@@ -77,8 +85,9 @@
                            Style="margin-left:10px">Confirm
                 </MudButton>  
         </div>
-         </EditForm>
-
+  </EditForm>
+    </div>
+</div>
 
 @code
 {
@@ -103,6 +112,10 @@
         TownshipSource = await customerservice.GetTownshipSource();
 
         CustomerGroupSource = await customerservice.GetCustomerGroupSource();
+
+        if (filterservice.EditItem != null)
+            customer = (Customer)filterservice.EditItem;
+
     }
 
     private async void OnValidSubmit(EditContext context)
@@ -126,9 +139,15 @@
 
         if(recordcount == -1)
         {
-           
+
             await DialogService.ShowMessageBox("Confirm","Confirm Completed Successfully");
             MudDialog.Close();
         }
+    }
+
+    private void Cancel()
+    {
+
+        MudDialog.Cancel();
     }
 }

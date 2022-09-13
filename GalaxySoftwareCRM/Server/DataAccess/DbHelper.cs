@@ -113,7 +113,6 @@ namespace GalaxySoftwareCRM.Server.DataAccess
                     throw new(ex.Message, ex.InnerException);
                 }
             }
-
             return result;
         }
 

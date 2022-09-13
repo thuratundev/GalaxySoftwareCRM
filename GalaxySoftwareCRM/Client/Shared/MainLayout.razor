@@ -4,7 +4,7 @@
 @inject ActionService actionservice
 
 
-<MudThemeProvider />
+<MudThemeProvider Theme="MyCustomTheme" />
 <MudDialogProvider />
 <MudSnackbarProvider />
 
@@ -53,7 +53,7 @@
         
     </MudDrawer>
  
-    <MudMainContent Class="pt-16 px-16">
+    <MudMainContent>
         <MudContainer Fixed=true MaxWidth="MaxWidth.Medium">   
             @Body
         </MudContainer>
@@ -64,6 +64,8 @@
     bool _drawerOpen = true;
 
     bool _drawerfilterOpen = false;
+
+    MudTheme MyCustomTheme = new CustomLayout();
 
     void DrawerToggle()
     {

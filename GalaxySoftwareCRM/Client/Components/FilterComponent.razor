@@ -35,15 +35,19 @@
         </MudGrid>
     </div>
     <div class="mt-auto p-2 bd-highlight" style="height:8%;">
-            <MudButton ButtonType="ButtonType.Submit"
-               Variant="Variant.Filled"
-                   Style="width:85px;margin-left:10px;background-color:#F0EABE">
+            <MudButton 
+                ButtonType="ButtonType.Button"
+                   Color="Color.Default"
+                   Variant="Variant.Filled"
+                   OnClick="@((e) => FilterCancelClicked())"
+                   Style="width:85px;margin-left:10px;">
         Cancel
     </MudButton>
-        <MudButton ButtonType="ButtonType.Submit"
+        <MudButton ButtonType="ButtonType.Button"
                    Variant="Variant.Filled"
+                   Color="Color.Primary"
                    OnClick="@((e) => FilterApplyClicked())"
-                   Style="width:85px;margin-left:10px;background-color:#2B7A0B;color:white">
+                   Style="width:85px;margin-left:10px;">
             Apply
         </MudButton>
         </div>
@@ -75,6 +79,11 @@
     private void FilterVisibilityExecute()
     {
         StateHasChanged();
+    }
+
+    private void FilterCancelClicked()
+    {
+        
     }
 
     private void FilterApplyClicked()

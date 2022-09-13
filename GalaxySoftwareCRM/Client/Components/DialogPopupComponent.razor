@@ -1,12 +1,33 @@
-﻿
+﻿@using GalaxySoftwareCRM.Shared.Models
+@using GalaxySoftwareCRM.Client.Services
+@inject FilterService filterservice
+
 <MudDialog>
     <DialogContent>
-        <CustomerSetupComponent/>
+       <div>
+            @renderWidget(ChildContent)
+       </div>
     </DialogContent>
-    
 </MudDialog>
 
 @code 
 {
-   
+    [Parameter]
+    public Type ChildContent { get; set; }
+
+    [Parameter]
+    public BaseModel? EditItem { get; set; }
+
+    protected override void OnInitialized()
+    {
+        filterservice.EditItem = this.EditItem;
+    }
+
+    private RenderFragment renderWidget(Type t) => builder =>
+    {
+      
+        builder.OpenComponent(0, t);
+        builder.CloseComponent();
+    };
+
 }
