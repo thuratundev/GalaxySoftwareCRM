@@ -1,6 +1,7 @@
-﻿<Router AppAssembly="@typeof(App).Assembly">
+﻿@using GalaxySoftwareCRM.Client.Helpers
+<Router AppAssembly="@typeof(App).Assembly">
     <Found Context="routeData">
-        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+        <AppRouteHelper RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
         <FocusOnNavigate RouteData="@routeData" Selector="h1" />
     </Found>
     <NotFound>
