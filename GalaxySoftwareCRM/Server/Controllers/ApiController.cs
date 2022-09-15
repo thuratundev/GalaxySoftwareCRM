@@ -1,5 +1,10 @@
-﻿using GalaxySoftwareCRM.Server.DataAccess;
+﻿using GalaxySoftwareCRM.Server.Authorization;
+using GalaxySoftwareCRM.Server.DataAccess;
+using GalaxySoftwareCRM.Server.Services;
 using GalaxySoftwareCRM.Shared;
+using GalaxySoftwareCRM.Shared.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -10,11 +15,19 @@ using System.Text.Json;
 
 namespace GalaxySoftwareCRM.Server.Controllers
 {
-    
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class ApiController : ControllerBase
     {
+        private IUserService _userService;
+        public ApiController(IUserService userservice)
+        {
+            _userService = userservice;
+        }
+
+
+      
         [HttpGet]
         [Route("demo")]
         public  IActionResult GetDemo(int param)
@@ -55,6 +68,14 @@ namespace GalaxySoftwareCRM.Server.Controllers
                 }
             }          
             return Ok(result);
+        }
+
+        [AllowAnonymous]
+        [HttpPost("auth")]
+        public IActionResult Authenticate(AuthenticateRequest model)
+        {
+            var response = _userService.Authenticate(model);
+            return Ok(response);
         }
     }
 }

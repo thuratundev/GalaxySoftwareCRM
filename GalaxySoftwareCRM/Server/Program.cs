@@ -1,6 +1,10 @@
 
 using GalaxySoftwareCRM.Server.DataAccess;
+using GalaxySoftwareCRM.Server.JwtUtilities;
+using GalaxySoftwareCRM.Server.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.ResponseCompression;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +12,22 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+
+builder.Services.AddAuthentication(options =>
+{
+    // Identity made Cookie authentication the default.
+    // However, we want JWT Bearer Auth to be the default.
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer();
+
+
+
+builder.Services.AddScoped<IJwtUtilities, JwtUtilities>();
+builder.Services.AddScoped<IUserService, UserService>();
+
+
+
 
 
 /*Added For CORS stands for cross-origin resource sharing
@@ -30,7 +50,7 @@ var app = builder.Build();
 
 
 
-// Configure the HTTP request pipeline.
+/*Configure the HTTP request pipeline. */
 if (app.Environment.IsDevelopment())
 {
     app.UseWebAssemblyDebugging();
@@ -49,11 +69,26 @@ app.UseCors("CustomCorsPolicy");
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 
+
+
+
 app.UseRouting();
+app.UseMiddleware<JwtMiddleware>();
+
+
+
 
 
 app.MapRazorPages();
+
+
+
 app.MapControllers();
+
+
+
+
 app.MapFallbackToFile("index.html");
 
 app.Run();
+
