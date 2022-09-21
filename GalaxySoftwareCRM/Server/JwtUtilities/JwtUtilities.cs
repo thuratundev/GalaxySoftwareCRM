@@ -11,7 +11,7 @@ namespace GalaxySoftwareCRM.Server.JwtUtilities
 
         const string SECRETKEY = "g@l@x4webm@$ter015427";
 
-        public string GenerateToken(User user)
+        public string GenerateToken(AuthenticateResponse user)
         {
             // generate token that is valid for 7 days
 

@@ -1,4 +1,5 @@
 ﻿using GalaxySoftwareCRM.Shared;
+using GalaxySoftwareCRM.Shared.Models;
 
 namespace GalaxySoftwareCRM.Client.Services
 {
@@ -7,5 +8,7 @@ namespace GalaxySoftwareCRM.Client.Services
         Task<IEnumerable<T>> GetDataByProcedure<T>(ApiHelper apiHelper) where T : class;
 
         Task<T?> SetDataByProcedure<T>(ApiHelper apiHelper);
+
+        Task<AuthenticateResponse> GetUserAuthentication(AuthenticateRequest request);
     }
 }

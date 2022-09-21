@@ -2,7 +2,10 @@
 @page "/"
 @layout LoginLayout
 @using GalaxySoftwareCRM.Shared.Models
+@using GalaxySoftwareCRM.Client.Services
 @inject NavigationManager NavigationManager
+@inject IDataService service
+@inject AuthService authservice
 
 
 <div class="col-lg-3">
@@ -12,8 +15,8 @@
         <EditForm Model="@model" OnValidSubmit="OnValidSubmit">
             <DataAnnotationsValidator />
             <div class="form-group mt-2">
-                <InputText @bind-Value="model.Name" class="form-control" placeholder="User Name" />
-                <ValidationMessage For="@(() => model.Name)" />
+                <InputText @bind-Value="model.UserMail" class="form-control" placeholder="User Name" />
+                <ValidationMessage For="@(() => model.UserMail)" />
             </div>
             <div class="form-group mt-2">
                 <InputText @bind-Value="model.Password" type="password" class="form-control" placeholder="Password" />
@@ -44,17 +47,25 @@
 
 @code 
 {
-    public User model = new User();
+    public AuthenticateRequest model = new();
 
     private bool loading;
 
     private async void OnValidSubmit()
     {
+        AuthenticateResponse authresponse;
 
         loading = true;
-        
-            await Task.Delay(2000);
+
+        authresponse = await service.GetUserAuthentication(model);
+
+        if(authresponse.Token != null)
+        {
+            authservice.CurrentUser = authresponse;
             NavigationManager.NavigateTo("/customerspage");
+        }
+
+      
         
         
     }

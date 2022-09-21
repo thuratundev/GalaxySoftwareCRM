@@ -4,6 +4,6 @@ namespace GalaxySoftwareCRM.Server.Services
 {
     public interface IUserService
     {
-        AuthenticateResponse Authenticate(AuthenticateRequest user);
+        Task<AuthenticateResponse?> Authenticate(AuthenticateRequest user);
     }
 }

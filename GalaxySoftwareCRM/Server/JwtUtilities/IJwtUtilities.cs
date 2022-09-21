@@ -4,7 +4,7 @@ namespace GalaxySoftwareCRM.Server.JwtUtilities
 {
     public interface IJwtUtilities
     {
-        public string GenerateToken(User user);
+        public string GenerateToken(AuthenticateResponse user);
         public int? ValidateToken(string token);
     }
 }
