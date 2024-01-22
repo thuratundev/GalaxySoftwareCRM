@@ -17,9 +17,9 @@ namespace GalaxySoftwareCRM.Client.Services
             service = _service;
         }
 
-        public async Task<IEnumerable<Township>> GetTownshipSource()
+        public async Task<IEnumerable<Township>> GetTownshipSource(int recordcount = 0)
         {
-            dynamic TownshipSource;
+            IEnumerable<Township> TownshipSource;
             List<ParameterHelper>? parameters = new()
             {
             new ParameterHelper{ PsqlDbTypes = NpgsqlDbType.Integer, PsqlParameterName = "_townshipid", PsqlParameterValue = -9, PsqlParameterDirection = System.Data.ParameterDirection.Input}
@@ -29,7 +29,7 @@ namespace GalaxySoftwareCRM.Client.Services
 
             TownshipSource = await service.GetDataByProcedure<Township>(apiHelper);
 
-            return TownshipSource;
+            return TownshipSource.Take(recordcount == 0 ? int.MaxValue : recordcount);
         }
 
         public async Task<IEnumerable<CustomerGroup>> GetCustomerGroupSource()

@@ -22,7 +22,7 @@
 else
 {
     <div>
-       <MudTable  Items="@customerlist" Hover="true">
+       <MudTable  Items="@customerlist" Hover="true" Dense=true>
         <HeaderContent>
             <MudTh>Name</MudTh>
             <MudTh>ShortDesc</MudTh>
@@ -39,9 +39,11 @@ else
             <MudTd Style="width:50px"><MudIconButton OnClick="@(()=>EditCutomerExecute(context))"
                 Color="Color.Primary" 
                 Icon="@Icons.Material.Filled.ModeEdit" 
+                Size="Size.Small"
                 aria-label="edit"></MudIconButton></MudTd>
             <MudTd Style="width:50px"><MudIconButton OnClick="@(()=>DeleteCustomerExecute(context))"
                 Color="Color.Error" 
+                Size="Size.Small"
                 Icon="@Icons.Material.Filled.DeleteForever" 
                 aria-label="delete"></MudIconButton></MudTd>
         </RowTemplate>
@@ -102,18 +104,25 @@ else
 
     private async void EditCutomerExecute(Customer customer)
     {
-        var options = new DialogOptions() { CloseButton = true, FullWidth = true, MaxWidth = MaxWidth.Large , NoHeader = true };
-        var parameters = new DialogParameters();
-
-        parameters.Add("ChildContent", typeof(CustomerSetupComponent));
-        parameters.Add("EditItem", customer);
-
-        var dialogresult = await DialogService.Show<DialogPopupComponent>("Customer Setup", parameters, options).Result;
-
-        if (dialogresult.Cancelled == false)
+        try
         {
-            await GetData();
-            StateHasChanged();
+            var options = new DialogOptions() { CloseButton = true, FullWidth = true, MaxWidth = MaxWidth.Large, NoHeader = true };
+            var parameters = new DialogParameters();
+
+            parameters.Add("ChildContent", typeof(CustomerSetupComponent));
+            parameters.Add("EditItem", customer);
+
+            var dialogresult = await DialogService.Show<DialogPopupComponent>("Customer Setup", parameters, options).Result;
+
+            if (dialogresult.Cancelled == false)
+            {
+                await GetData();
+                StateHasChanged();
+            }
+        }
+        catch (Exception ex)
+        {
+            throw ex;
         }
     }
 

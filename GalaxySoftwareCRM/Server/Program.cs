@@ -1,5 +1,6 @@
 
 using GalaxySoftwareCRM.Server.DataAccess;
+using GalaxySoftwareCRM.Server.EncryptUtilities;
 using GalaxySoftwareCRM.Server.JwtUtilities;
 using GalaxySoftwareCRM.Server.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -75,6 +76,7 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseMiddleware<JwtMiddleware>();
 
+//app.UseMiddleware<EncryptionMiddleware>();
 
 
 

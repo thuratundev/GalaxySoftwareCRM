@@ -16,8 +16,8 @@ builder.Services.AddScoped<AuthService>();
 
 builder.Services.AddHttpClient<IDataService, DataService>(client =>
 {
-     // client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress);
-      client.BaseAddress = new Uri("http://localhost:99/");
+      client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress);
+     // client.BaseAddress = new Uri("http://localhost:99/");
 });
 
 builder.Services.AddMudServices();

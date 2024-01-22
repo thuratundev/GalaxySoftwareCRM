@@ -72,10 +72,19 @@ namespace GalaxySoftwareCRM.Server.Controllers
 
         [AllowAnonymous]
         [HttpPost("auth")]
-        public async Task<IActionResult> Authenticate(AuthenticateRequest model)
+        public async Task<IActionResult> Authenticate([FromBody] JsonElement request)
         {
+            AuthenticateRequest model = Newtonsoft.Json.JsonConvert.DeserializeObject<AuthenticateRequest?>(request.ToString()) ?? new();
             var response = await _userService.Authenticate(model);
             return Ok(response);
         }
+
+        //[AllowAnonymous]
+        //[HttpPost("auth")]
+        //public async Task<IActionResult> Authenticate(AuthenticateRequest model)
+        //{
+        //    var response = await _userService.Authenticate(model);
+        //    return Ok(response);
+        //}
     }
 }

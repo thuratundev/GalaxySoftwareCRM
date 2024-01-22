@@ -13,7 +13,7 @@
  </div>
  
  <div class="row h-75 mt-4">
- <EditForm  Model="@customer"  OnValidSubmit="OnValidSubmit">
+ <EditForm   Model="@customer"  OnValidSubmit="OnValidSubmit">
         <div class="d-flex flex-md-column" style="height:400px;overflow-y:auto;overflow-x:hidden">
             <MudGrid>
                     <MudItem xs="12" sm="6" md="4">
@@ -61,6 +61,7 @@
                             }
                      </MudSelect>        
                     </MudItem>
+
                     <MudItem xs="12" sm="6" md="4">
                         <MudSelect T="Int16?" Label="CustGroup" @bind-Value="customer.custgroupid">
                             @foreach (var customergroup in CustomerGroupSource)
@@ -70,8 +71,18 @@
                                 </MudSelectItem>
                             }
                         </MudSelect>
+                    </MudItem> 
+                    <MudItem xs="12" sm="6" md="4">
+                        <MudTextField @bind-Value="customer.custgroupid" Label="Township"
+                                      Variant="Variant.Text" Adornment="Adornment.End"
+                                      OnAdornmentClick="@ToggleOpen"
+                                      AdornmentIcon="@Icons.Material.Filled.LocationCity" AdornmentColor="Color.Secondary" />
                     </MudItem>
             </MudGrid>
+                <MudPopover Open="@_isOpen" Fixed="false" OverflowBehavior="OverflowBehavior.FlipNever"
+                            AnchorOrigin="Origin.TopCenter" TransformOrigin="Origin.TopCenter">
+                        <TownshipComponent OnCloseExecute="()=> _isOpen = !_isOpen " />
+                </MudPopover>
         </div>
         <div class="d-flex flex-md-row m-2" >
                 <MudButton ButtonType="ButtonType.Button"
@@ -105,11 +116,21 @@
 
     public Int16? SelectedTownshipId { get; set; }
 
+    public bool _isOpen;
+
+    public void ToggleOpen()
+    {
+        if (_isOpen)
+            _isOpen = false;
+        else
+            _isOpen = true;
+    }
+
     protected override async Task OnInitializedAsync()
     {
         customerservice = new CustomerService(service);
 
-        TownshipSource = await customerservice.GetTownshipSource();
+        TownshipSource = await customerservice.GetTownshipSource(10);
 
         CustomerGroupSource = await customerservice.GetCustomerGroupSource();
 
@@ -117,6 +138,7 @@
             customer = (Customer)filterservice.EditItem;
 
     }
+
 
     private async void OnValidSubmit(EditContext context)
     {

@@ -1,0 +1,55 @@
+﻿@using GalaxySoftwareCRM.Shared;
+@using GalaxySoftwareCRM.Shared.Models;
+@using GalaxySoftwareCRM.Client.Services
+@inject IDataService service
+
+
+    <div Class="mb-4 p-2" style="width:320px">
+        <div xs="12" sm="12" md="12" class="d-flex flex-row">
+            <MudText Class="flex-grow-1 mt-2" Typo="Typo.h6" Align="Align.Center">Township Info</MudText>
+            <MudIconButton Class="mt-3" Icon="@Icons.Material.Filled.Close" Variant="Variant.Text" Size=Size.Small OnClick="@OnCloseExecute"></MudIconButton>
+        </div>
+        <div class="mt-4">
+            <MudTable Dense=true Items="@TownshipSource"
+                      T="Township"
+                      Bordered="false"
+                      Elevation=0
+                      Hover="true"
+                      FixedHeader="true" Height="400px" 
+                      Breakpoint="Breakpoint.None"
+                      OnRowClick="@OnRowClick">
+                <HeaderContent>
+                    <MudTh>Name</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="Name">@context.Name</MudTd>
+                    </RowTemplate>
+                </MudTable>
+            </div>
+        </div>
+    @code
+    {
+
+    [Parameter]
+    public Action OnCloseExecute { get; set; }
+
+
+    private CustomerService customerservice;
+
+    public IEnumerable<Township> TownshipSource = new List<Township>();
+
+
+
+    protected async override Task OnInitializedAsync()
+    {
+        customerservice = new CustomerService(service);
+
+        TownshipSource = await customerservice.GetTownshipSource();
+    }
+
+    void OnRowClick(TableRowClickEventArgs<Township> args)
+    {
+        
+    }
+
+}

@@ -27,8 +27,8 @@ namespace GalaxySoftwareCRM.Server.EncryptUtilities
             //    context.Request.QueryString = new QueryString($"?{decryptedString}");
             //}
             await requestDelegate(context);
-            // await context.Request.Body.DisposeAsync();
-            //await context.Response.Body.DisposeAsync();
+            await context.Request.Body.DisposeAsync();
+            await context.Response.Body.DisposeAsync();
         }
 
         private static CryptoStream EncryptStream(Stream responseStream)

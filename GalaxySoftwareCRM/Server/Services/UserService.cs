@@ -20,7 +20,7 @@ namespace GalaxySoftwareCRM.Server.Services
 
             List<ParameterHelper>? parameters = new()
         {
-            new ParameterHelper{ PsqlDbTypes = NpgsqlDbType.Varchar, PsqlParameterName = "_usermail", PsqlParameterValue =  user.UserMail, PsqlParameterDirection = System.Data.ParameterDirection.Input},
+            new ParameterHelper{ PsqlDbTypes = NpgsqlDbType.Varchar, PsqlParameterName = "_useremail", PsqlParameterValue =  user.UserMail, PsqlParameterDirection = System.Data.ParameterDirection.Input},
             new ParameterHelper { PsqlDbTypes = NpgsqlDbType.Varchar, PsqlParameterName = "_userpassword", PsqlParameterValue = user.Password, PsqlParameterDirection = System.Data.ParameterDirection.Input }
         };
 
