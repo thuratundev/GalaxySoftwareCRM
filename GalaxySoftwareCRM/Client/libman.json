@@ -1,0 +1,34 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "tailwindcss@2.2.19",
+      "destination": "wwwroot/css/tailwindcss/"
+    }
+  ,
+{
+  "provider": "cdnjs",
+  "library": "bootstrap@5.3.3",
+  "destination": "wwwroot/css/bootstrap/",
+  "files": [
+    "js/bootstrap.min.js",
+    "css/bootstrap.min.css"
+  ]
+}
+,
+{
+  "provider": "cdnjs",
+  "library": "bootstrap-icons@1.11.3",
+  "destination": "wwwroot/css/bootstrap-icons/",
+  "files": [
+    "bootstrap-icons.svg",
+    "font/fonts/bootstrap-icons.woff",
+    "font/fonts/bootstrap-icons.woff2",
+    "font/bootstrap-icons.css",
+    "font/bootstrap-icons.json",
+    "font/bootstrap-icons.min.css"
+  ]
+}
+]
+}

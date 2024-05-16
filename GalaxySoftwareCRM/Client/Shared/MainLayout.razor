@@ -54,7 +54,12 @@
         </MudDrawerHeader>
         <MudDrawerContainer Style="margin-top:0px;height:90%;">
             <MudContainer Style="height:100%;">
-                <FilterComponent />
+                @{
+                    if(_drawerfilterOpen)
+                    {
+                        <FilterComponent />
+                    }
+                }
             </MudContainer>
         </MudDrawerContainer>
 

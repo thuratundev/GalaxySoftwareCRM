@@ -31,6 +31,8 @@ namespace GalaxySoftwareCRM.Shared
         public Int16? custgroupid { get; set; }
         public Int16? userid { get; set; }
 
+        public string townshipname { get; set; }
+
 
 
 

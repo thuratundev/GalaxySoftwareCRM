@@ -1,5 +1,4 @@
-﻿
-@page "/"
+﻿@page "/"
 @layout LoginLayout
 @using GalaxySoftwareCRM.Shared.Models
 @using GalaxySoftwareCRM.Client.Services
@@ -7,45 +6,49 @@
 @inject IDataService service
 @inject AuthService authservice
 
-
-<div class="col-lg-3">
-<div class="card">
-    <h4 class="card-header">GalaxySoftware <b>CRM</b></h4>
+<div class="container-sm align-self-center" style="max-width:376px">
+    <div class="d-flex justify-content-center">
+        <p class="h5">
+            Customer Management System
+        </p>
+    </div>
+    <div class="d-flex justify-content-center">
+        <small class="text-body-secondary">
+           Galaxy Software
+        </small>
+    </div>
     <div class="card-body">
         <EditForm Model="@model" OnValidSubmit="OnValidSubmit">
             <DataAnnotationsValidator />
-            <div class="form-group mt-2">
-                <InputText @bind-Value="model.UserMail" class="form-control" placeholder="User Name" />
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="model.UserMail" class="form-control" id="floatingInput" placeholder="username@example.com" />
+                <label for="floatingInput">User name</label>
                 <ValidationMessage For="@(() => model.UserMail)" />
             </div>
-            <div class="form-group mt-2">
-                <InputText @bind-Value="model.Password" type="password" class="form-control" placeholder="Password" />
+            <div class="form-floating">
+                <InputText @bind-Value="model.Password" type="password" class="form-control" id="floatingPassword" placeholder="Password" />
+                <label for="floatingPassword">Password</label>
                 <ValidationMessage For="@(() => model.Password)" />
             </div>
             <div>
-            <div class="row mt-5">
-                <div class="col-sm">
-                    <NavLink href="account/register" class="btn btn-link">Register</NavLink>
-                </div>   
-                <div class="col-sm">
-                        <MudButton ButtonType="ButtonType.Submit"
-                                   Variant="Variant.Filled"
-                                   FullWidth=true
-                                   Color="Color.Primary"
-                                   Style="margin-right:10px">
-                            LogIn
-                        </MudButton>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <div class="col-sm">
+                        <NavLink href="account/register" class="btn btn-link">Register</NavLink>
                     </div>
-                 
+                    <div class="d-flex row reverse me-1">
+                        <button type="submit" class="btn btn-primary">Sign In <i class="bi bi-box-arrow-in-right"></i></button>
+                    </div>
+
+                </div>
             </div>
-            </div>
-           
+
         </EditForm>
     </div>
 </div>
-</div>
 
-@code 
+
+@code
 {
     public AuthenticateRequest model = new();
 
@@ -59,15 +62,15 @@
 
         authresponse = await service.GetUserAuthentication(model);
 
-        if(authresponse.Token != null)
+        if (authresponse.Token != null)
         {
             authservice.CurrentUser = authresponse;
             NavigationManager.NavigateTo("/customerspage");
         }
 
-      
-        
-        
+
+
+
     }
 
 }

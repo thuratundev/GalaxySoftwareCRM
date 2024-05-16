@@ -43,23 +43,10 @@
                     </MudItem>
 
                     <MudItem xs="12" sm="6" md="4">
-                        <MudCheckBox Label="AllowCredit"
-                                      @bind-Value="customer.iscredit" For="@(() => customer.iscredit)" />
-                    </MudItem>
-                    <MudItem xs="12" sm="6" md="4">
-                        <MudCheckBox Label="Inactive"
-                                      @bind-Value="customer.isinactive" For="@(() => customer.isinactive)" />
-                    </MudItem>
-
-                    <MudItem xs="12" sm="6" md="4">
-                     <MudSelect T="Int16?" Label="Township" @bind-Value="customer.townshipid" >
-                            @foreach (var township in TownshipSource)
-                            {
-                            <MudSelectItem T="Int16?" Value="@township?.TownshipId">
-                                @township?.Name
-                            </MudSelectItem>
-                            }
-                     </MudSelect>        
+                        <MudTextField @bind-Value="customer.townshipname" Label="Township"
+                                      Variant="Variant.Text" Adornment="Adornment.End"
+                                      OnAdornmentClick="@ToggleOpen"
+                                      AdornmentIcon="@Icons.Material.Filled.LocationCity" AdornmentColor="Color.Secondary" />
                     </MudItem>
 
                     <MudItem xs="12" sm="6" md="4">
@@ -71,13 +58,21 @@
                                 </MudSelectItem>
                             }
                         </MudSelect>
-                    </MudItem> 
-                    <MudItem xs="12" sm="6" md="4">
-                        <MudTextField @bind-Value="customer.custgroupid" Label="Township"
-                                      Variant="Variant.Text" Adornment="Adornment.End"
-                                      OnAdornmentClick="@ToggleOpen"
-                                      AdornmentIcon="@Icons.Material.Filled.LocationCity" AdornmentColor="Color.Secondary" />
                     </MudItem>
+
+                    <!--For Layout / Dummy Div-->
+                    <MudItem xs="12" sm="6" md="4">
+                    </MudItem>
+
+                    <MudItem xs="12" sm="6" md="4">
+                        <MudCheckBox Label="AllowCredit"
+                                     @bind-Value="customer.iscredit" For="@(() => customer.iscredit)" />
+                    </MudItem>
+                    <MudItem xs="12" sm="6" md="4">
+                        <MudCheckBox Label="Inactive"
+                                     @bind-Value="customer.isinactive" For="@(() => customer.isinactive)" />
+                    </MudItem>
+
             </MudGrid>
                 <MudPopover Open="@_isOpen" Fixed="false" OverflowBehavior="OverflowBehavior.FlipNever"
                             AnchorOrigin="Origin.TopCenter" TransformOrigin="Origin.TopCenter">
@@ -130,7 +125,7 @@
     {
         customerservice = new CustomerService(service);
 
-        TownshipSource = await customerservice.GetTownshipSource(10);
+        TownshipSource = await customerservice.GetTownshipSource();
 
         CustomerGroupSource = await customerservice.GetCustomerGroupSource();
 
@@ -149,7 +144,6 @@
         _customer.isinactive = false;
         _customer.isdeleted = false;
         _customer.isupdated = true;
-        _customer.userid = 1;
 
         _customer.sr = Guid.NewGuid();
 

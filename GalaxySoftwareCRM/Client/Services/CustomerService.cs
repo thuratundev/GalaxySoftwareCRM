@@ -72,5 +72,35 @@ namespace GalaxySoftwareCRM.Client.Services
 
             return result;
         }
+
+        public async Task<IEnumerable<Customer>> GetCustomerSource(int? _customerid = -9, int? _townshipid = -9, int? _custgroupid = -9)
+        {
+            List<ParameterHelper>? parameters = new()
+            {
+                new ParameterHelper{ PsqlDbTypes = NpgsqlDbType.Integer, PsqlParameterName = "_customerid", PsqlParameterValue = _customerid ?? -9, PsqlParameterDirection = System.Data.ParameterDirection.Input},
+                new ParameterHelper { PsqlDbTypes = NpgsqlDbType.Integer, PsqlParameterName = "_townshipid", PsqlParameterValue = _townshipid ?? -9, PsqlParameterDirection = System.Data.ParameterDirection.Input },
+                new ParameterHelper { PsqlDbTypes = NpgsqlDbType.Integer, PsqlParameterName = "_custgroupid", PsqlParameterValue = _custgroupid ?? -9, PsqlParameterDirection = System.Data.ParameterDirection.Input }
+            };
+
+            ApiHelper apiHelper = new ApiHelper { IsStoredProcedure = true, StoredProcedureName = "usp_getcustomerinfo", Parameters = parameters, SqlExecutionType = SqlExecutionTypes.ExecuteResult };
+
+            var result = await service.GetDataByProcedure<Customer>(apiHelper);
+            return result;
+
+        }
+
+        public async Task<int?> DeleteCustomerById(int? _customerid)
+        {
+            List<ParameterHelper>? parameters = new()
+        {
+            new ParameterHelper{ PsqlDbTypes = NpgsqlDbType.Integer, PsqlParameterName = "_customerid", PsqlParameterValue = _customerid ?? -9, PsqlParameterDirection = System.Data.ParameterDirection.Input}
+        };
+
+            ApiHelper apiHelper = new ApiHelper { IsStoredProcedure = true, StoredProcedureName = "usp_deletecustomerbyid", Parameters = parameters, SqlExecutionType = SqlExecutionTypes.ExecuteOnly };
+
+            var result = await service.SetDataByProcedure<int?>(apiHelper);
+
+            return result;
+        }
     }
 }
